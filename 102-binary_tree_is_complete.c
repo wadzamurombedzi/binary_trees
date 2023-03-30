@@ -1,34 +1,58 @@
 #include "binary_trees.h"
 
 /**
- * binary_tree_rotate_left - Left-rotates a binary tree.
- * @tree: A pointer to the root node of the tree to rotate.
+ * binary_tree_is_complete - checks if a binary tree is complete
+ * @tree: a pointer to the root node of the tree to check
  *
- * Return: A pointer to the new root node after rotation.
+ * Return: 1 if the tree is complete
+ *         0 if the tree is not complete
+ *         0 if tree is NULL
  */
-binary_tree_t *binary_tree_rotate_left(binary_tree_t *tree)
+int binary_tree_is_complete(const binary_tree_t *tree)
 {
-	binary_tree_t *pivot, *tmp;
+	size_t size;
 
-	if (tree == NULL || tree->right == NULL)
-		return (NULL);
+	if (!tree)
+		return (0);
+	size = binary_tree_size(tree);
 
-	pivot = tree->right;
-	tmp = pivot->left;
-	pivot->left = tree;
-	tree->right = tmp;
-	if (tmp != NULL)
-		tmp->parent = tree;
-	tmp = tree->parent;
-	tree->parent = pivot;
-	pivot->parent = tmp;
-	if (tmp != NULL)
-	{
-		if (tmp->left == tree)
-			tmp->left = pivot;
-		else
-			tmp->right = pivot;
-	}
+	return (btic_helper(tree, 0, size));
+}
 
-	return (pivot);
+/**
+ * btic_helper - checks if a binary tree is complete
+ * @tree: a pointer to the root node of the tree to check
+ * @index: node index to check
+ * @size: number of nodes in the tree
+ *
+ * Return: 1 if the tree is complete
+ *         0 if the tree is not complete
+ *         0 if tree is NULL
+ */
+int btic_helper(const binary_tree_t *tree, size_t index, size_t size)
+{
+	if (!tree)
+		return (1);
+
+	if (index >= size)
+		return (0);
+
+	return (btic_helper(tree->left, 2 * index + 1, size) &&
+		btic_helper(tree->right, 2 * index + 2, size));
+}
+
+/**
+ * binary_tree_size - measures the size of a binary tree
+ * @tree: tree to measure the size of
+ *
+ * Return: size of the tree
+ *         0 if tree is NULL
+ */
+size_t binary_tree_size(const binary_tree_t *tree)
+{
+	if (!tree)
+		return (0);
+
+	return (binary_tree_size(tree->left) +
+		binary_tree_size(tree->right) + 1);
 }
